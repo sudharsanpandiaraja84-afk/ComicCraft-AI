@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-indigo-500 selection:text-white;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  }
+
+  .font-story {
+    font-family: 'Lora', 'Merriweather', 'Georgia', serif;
+  }
+
+  .font-cinzel {
+    font-family: 'Cinzel', serif;
+  }
+}
+
+/* Atmospheric Starry Grid Background */
+.forge-grid-bg {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+.forge-dots-bg {
+  background-image: radial-gradient(rgba(129, 140, 248, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Reader Color Schemes */
+.reader-theme-dark {
+  background-color: #0b0f19;
+  color: #e2e8f0;
+}
+
+.reader-theme-sepia {
+  background-color: #fbf0d9;
+  color: #382d1f;
+}
+
+.reader-theme-paper {
+  background-color: #f7f7f8;
+  color: #1a1e27;
+}
+
+.reader-theme-midnight {
+  background-color: #030712;
+  color: #94a3b8;
+}
+
+/* Drop cap for first paragraph */
+.story-dropcap::first-letter {
+  font-family: 'Cinzel', serif;
+  font-size: 3.4em;
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.18em;
+  margin-top: 0.08em;
+  color: #818cf8;
+  font-weight: 700;
+}
+
+.reader-theme-sepia .story-dropcap::first-letter {
+  color: #b45309;
+}
+
+.reader-theme-paper .story-dropcap::first-letter {
+  color: #4f46e5;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #080c14;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-panel-elevated {
+  background: rgba(20, 28, 48, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(129, 140, 248, 0.2);
+}
+
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.02); }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 4s ease-in-out infinite;
+}
