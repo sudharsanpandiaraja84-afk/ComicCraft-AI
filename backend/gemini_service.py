@@ -21,7 +21,9 @@ import demo_data
 logger = logging.getLogger("storyforge.gemini")
 
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
-FALLBACK_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+PRIMARY_MODEL = os.environ.get("GEMINI_PRIMARY_MODEL", "gemini-3.5-flash-lite").strip()
+DEFAULT_MODELS = ["gemini-3.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+FALLBACK_MODELS = [PRIMARY_MODEL] + [m for m in DEFAULT_MODELS if m != PRIMARY_MODEL]
 
 def get_gemini_api_key(override_key: Optional[str] = None) -> Optional[str]:
     """Retrieves API key from parameter or environment."""
