@@ -1,8 +1,13 @@
 import uuid
-from typing import Dict, Any, List, Optional
+from typing import Any
+
 from schemas import (
-    CompleteStoryResponse, StoryBlueprint, StoryCharacter,
-    StoryPlotStructure, QualityCheckReport, Chapter
+    Chapter,
+    CompleteStoryResponse,
+    QualityCheckReport,
+    StoryBlueprint,
+    StoryCharacter,
+    StoryPlotStructure,
 )
 
 DEMO_STORY_TEXT = """The subterranean level of St. Jude College’s Carlyle Memorial Library was where dust went to die. High arched vaults of grey granite, chilled by centuries of New England river damp, pressed down against towering aisles of calfskin folios. Most undergraduates rarely ventured beyond the glowing fluorescent banks of the second-floor computer lab. But Julian Hayes was not most students.
@@ -67,6 +72,7 @@ Julian looked from the trembling, righteous eyes of Dr. Vance to the predatory c
 
 With a sudden, decisive motion, Julian wrenched the lever downward."""
 
+
 def get_demo_project() -> CompleteStoryResponse:
     """Returns the pre-computed rich demo story project."""
     blueprint = StoryBlueprint(
@@ -83,9 +89,9 @@ def get_demo_project() -> CompleteStoryResponse:
             rising_action="Head archivist Dr. Vance reveals the chamber's secret, just as billionaire alumnus Silas Reed intercepts them.",
             climax="Reed reveals the devastating truth: the ledger contains the confession of Julian's own ancestor.",
             falling_action="With security guards closing in, Julian assesses the moral cost of silence versus exposure.",
-            resolution="Julian triggers the emergency sluice lever, choosing to expose the truth to the river below and rewrite his legacy on his own terms."
+            resolution="Julian triggers the emergency sluice lever, choosing to expose the truth to the river below and rewrite his legacy on his own terms.",
         ),
-        ending_type="Twist Ending"
+        ending_type="Twist Ending",
     )
 
     characters = [
@@ -102,7 +108,7 @@ def get_demo_project() -> CompleteStoryResponse:
             strength="Exceptional observational deduction and photographic recall of architectural blueprints.",
             weakness="Hesitant when confronted with complex moral ambiguity.",
             relationships="Mentored by Dr. Vance; direct philosophical adversary to Silas Reed.",
-            character_arc="Transforms from a naive researcher into a decisive agent who accepts moral responsibility for the past."
+            character_arc="Transforms from a naive researcher into a decisive agent who accepts moral responsibility for the past.",
         ),
         StoryCharacter(
             name="Dr. Eleanor Vance",
@@ -117,7 +123,7 @@ def get_demo_project() -> CompleteStoryResponse:
             strength="Encyclopedic mastery of 19th-century archival cryptography and campus history.",
             weakness="Physical frailty and lack of institutional allies among the university board.",
             relationships="Treats Julian as a worthy intellectual apprentice; views Reed as a cynical vandal.",
-            character_arc="Moves from passive preservationist to actively assisting Julian in an irreversible act of defiance."
+            character_arc="Moves from passive preservationist to actively assisting Julian in an irreversible act of defiance.",
         ),
         StoryCharacter(
             name="Silas Reed",
@@ -132,8 +138,8 @@ def get_demo_project() -> CompleteStoryResponse:
             strength="Unlimited financial capital, security assets, and deep psychological intimidation tactics.",
             weakness="Arrogant presumption that every individual has a negotiable price.",
             relationships="Antagonistic toward Julian and Vance; treats the college as a personal commodity.",
-            character_arc="His veneer of calm control cracks when confronted by someone whose loyalty cannot be bought."
-        )
+            character_arc="His veneer of calm control cracks when confronted by someone whose loyalty cannot be bought.",
+        ),
     ]
 
     quality_check = QualityCheckReport(
@@ -151,13 +157,13 @@ def get_demo_project() -> CompleteStoryResponse:
             "Flawless mystery progression with physical clues (emerald latch, signet ring) paying off organically.",
             "High-stakes psychological confrontation in a confined atmospheric setting.",
             "Subversive twist that personalizes the conflict for the protagonist without feeling unearned.",
-            "Sharp, rhythmic dialogue highlighting ideological contrast between scholar, mentor, and oligarch."
+            "Sharp, rhythmic dialogue highlighting ideological contrast between scholar, mentor, and oligarch.",
         ],
         critique="The narrative masterfully blends Gothic academic mystery with modern corporate thriller stakes.",
         improvements_made=[
             "Reinforced the sensory details of the subterranean granite and river draft.",
-            "Tightened the pacing during Reed's confrontation to heighten claustrophobic urgency."
-        ]
+            "Tightened the pacing during Reed's confrontation to heighten claustrophobic urgency.",
+        ],
     )
 
     chapters = [
@@ -166,7 +172,7 @@ def get_demo_project() -> CompleteStoryResponse:
             title="The Emerald Latch",
             content=DEMO_STORY_TEXT,
             word_count=len(DEMO_STORY_TEXT.split()),
-            summary="Julian discovers the secret room beneath Carlyle Library and is confronted by Dr. Vance and Silas Reed."
+            summary="Julian discovers the secret room beneath Carlyle Library and is confronted by Dr. Vance and Silas Reed.",
         ),
         Chapter(
             chapter_number=2,
@@ -185,8 +191,8 @@ In the pitch-black darkness of the ascending lift, Julian could hear the emergen
 
 The past was no longer buried. And tomorrow morning, neither was he.""",
             word_count=235,
-            summary="Julian activates the library emergency protocol and escapes Silas Reed's men with the ledger."
-        )
+            summary="Julian activates the library emergency protocol and escapes Silas Reed's men with the ledger.",
+        ),
     ]
 
     return CompleteStoryResponse(
@@ -205,10 +211,13 @@ The past was no longer buried. And tomorrow morning, neither was he.""",
         quality_check=quality_check,
         chapters=chapters,
         is_demo=True,
-        created_at="Demo Edition"
+        created_at="Demo Edition",
     )
 
-def get_demo_regenerated_story(regeneration_option: str = "Same idea, different story", custom_instruction: str = "") -> CompleteStoryResponse:
+
+def get_demo_regenerated_story(
+    regeneration_option: str = "Same idea, different story", custom_instruction: str = ""
+) -> CompleteStoryResponse:
     """Returns a completely different narrative interpretation of the same idea for demo mode."""
     v2_text = """The brass-faced grandfather clock in the corner of St. Jude College's West Wing repository had not ticked since the hurricane of 1938. Or so sophomore archivist Maya Lin had been instructed to believe.
 
@@ -242,9 +251,9 @@ Maya looked from the golden crest of the fellowship to the humming copper telegr
             rising_action="She inspects the ticker tape records and realizes eighty years of expulsions were coordinated here.",
             climax="President Sterling confronts her and reveals she was pre-selected through a fellowship arranged before she enrolled.",
             falling_action="Maya weighs the prestige of joining the inner circle against the ethical cost of complicity.",
-            resolution="Maya palms a spool of copper tape into her boot before accepting Sterling's pen, playing the long game from the inside."
+            resolution="Maya palms a spool of copper tape into her boot before accepting Sterling's pen, playing the long game from the inside.",
         ),
-        ending_type="Twist Ending"
+        ending_type="Twist Ending",
     )
 
     characters_v2 = [
@@ -261,7 +270,7 @@ Maya looked from the golden crest of the fellowship to the humming copper telegr
             strength="Mastery of cipher decryption and rapid tactical deduction.",
             weakness="Tendency to keep dangerous secrets to herself.",
             relationships="Distrustful mentee to President Sterling.",
-            character_arc="Transitions from an outsider trying to survive to a strategic infiltrator within the university hierarchy."
+            character_arc="Transitions from an outsider trying to survive to a strategic infiltrator within the university hierarchy.",
         ),
         StoryCharacter(
             name="President Arthur Sterling",
@@ -276,8 +285,8 @@ Maya looked from the golden crest of the fellowship to the humming copper telegr
             strength="Unmatched bureaucratic foresight and psychological leverage.",
             weakness="Inability to understand idealism that cannot be bought.",
             relationships="Sees Maya as the sharpest student he has encountered in twenty years.",
-            character_arc="Is outmaneuvered when Maya accepts the contract while securing the incriminating spool."
-        )
+            character_arc="Is outmaneuvered when Maya accepts the contract while securing the incriminating spool.",
+        ),
     ]
 
     quality_v2 = QualityCheckReport(
@@ -294,10 +303,12 @@ Maya looked from the golden crest of the fellowship to the humming copper telegr
         strengths=[
             "Completely fresh narrative interpretation retaining the student-discovers-secret-room premise.",
             "Compelling institutional conspiracy with high-stakes moral dilemma.",
-            "Subtle ending that leaves the protagonist poised as an undercover operative."
+            "Subtle ending that leaves the protagonist poised as an undercover operative.",
         ],
         critique="Offers a cerebral political twist on academic mystery.",
-        improvements_made=["Heightened the tactile sensory details of the ticker tape and brass telegraph."]
+        improvements_made=[
+            "Heightened the tactile sensory details of the ticker tape and brass telegraph."
+        ],
     )
 
     return CompleteStoryResponse(
@@ -320,14 +331,15 @@ Maya looked from the golden crest of the fellowship to the humming copper telegr
                 title="The Ticking Escapement",
                 content=v2_text,
                 word_count=len(v2_text.split()),
-                summary="Maya Lin tracks the ticking clockwork into a subterranean administrative salon."
+                summary="Maya Lin tracks the ticking clockwork into a subterranean administrative salon.",
             )
         ],
         is_demo=True,
-        created_at="Demo Regenerated Version"
+        created_at="Demo Regenerated Version",
     )
 
-def get_demo_version_comparison(title_a: str, title_b: str) -> Dict[str, Any]:
+
+def get_demo_version_comparison(title_a: str, title_b: str) -> dict[str, Any]:
     """Provides structured comparative analysis between story versions."""
     return {
         "version_a_id": "ver_a",
@@ -341,10 +353,11 @@ def get_demo_version_comparison(title_a: str, title_b: str) -> Dict[str, Any]:
         "plot_differences": "Version A focuses on genealogical guilt, corporate extortion, and physical confrontation over 19th-century records. Version B pivots into institutional espionage, psychological recruitment, and mechanical telegraph surveillance.",
         "ending_differences": "Version A ends with an explosive, irreversible act of public defiance as river water seals the chamber. Version B concludes with an ambiguous, calculating compromise where the protagonist infiltrates the syndicate.",
         "tone_and_style_differences": "Version A has a Gothic, high-adrenaline thriller tone with dramatic confrontations. Version B leans into cerebral, noir institutional suspense with quiet menace.",
-        "recommendation": "Choose Version A for heart-pounding physical stakes and ancestral drama; choose Version B for psychological intrigue and political espionage."
+        "recommendation": "Choose Version A for heart-pounding physical stakes and ancestral drama; choose Version B for psychological intrigue and political espionage.",
     }
 
-def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5) -> Dict[str, Any]:
+
+def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5) -> dict[str, Any]:
     """Generates rich structured visual scenes and profiles for demo story visualization."""
     julian = {
         "name": "Julian Hayes",
@@ -359,7 +372,7 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
         "clothing": "dark charcoal wool coat, slate grey knit crewneck sweater, dark denim trousers, worn leather boots",
         "accessories": "vintage silver signet ring with coiled serpent crest on right hand, canvas messenger bag with brass buckles",
         "distinctive_features": "silver signet ring heirloom, faint ink smudge on right fingers",
-        "appearance_prompt_snippet": "20-year-old collegiate young man, sharp jawline, tousled wavy dark brown hair, dark brown eyes, wearing dark charcoal wool coat, slate grey knit sweater, vintage silver serpent signet ring"
+        "appearance_prompt_snippet": "20-year-old collegiate young man, sharp jawline, tousled wavy dark brown hair, dark brown eyes, wearing dark charcoal wool coat, slate grey knit sweater, vintage silver serpent signet ring",
     }
 
     vance = {
@@ -375,7 +388,7 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
         "clothing": "deep burgundy cable-knit cardigan over high-collared ivory blouse, charcoal wool maxi skirt",
         "accessories": "silver reading spectacles on braided cord, antique heavy brass iron key ring",
         "distinctive_features": "wire-rimmed silver spectacles, piercing scholarly gaze",
-        "appearance_prompt_snippet": "58-year-old distinguished woman, silver-streaked grey hair in low chignon, wire-rimmed spectacles, deep burgundy cardigan, holding antique brass key ring"
+        "appearance_prompt_snippet": "58-year-old distinguished woman, silver-streaked grey hair in low chignon, wire-rimmed spectacles, deep burgundy cardigan, holding antique brass key ring",
     }
 
     reed = {
@@ -391,7 +404,7 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
         "clothing": "bespoke double-breasted midnight navy cashmere overcoat, tailored charcoal suit, silk tie",
         "accessories": "platinum watch, leather driving gloves",
         "distinctive_features": "commanding smirk, cold predatory gaze",
-        "appearance_prompt_snippet": "45-year-old billionaire man, tailored midnight navy cashmere overcoat, slicked dark hair with silver temples, icy blue eyes, chiseled predatory expression"
+        "appearance_prompt_snippet": "45-year-old billionaire man, tailored midnight navy cashmere overcoat, slicked dark hair with silver temples, icy blue eyes, chiseled predatory expression",
     }
 
     loc_stacks = {
@@ -401,8 +414,12 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
         "time_period": "midnight in late autumn",
         "color_palette": "deep shadows, aged amber parchment, dark oak, cold slate grey",
         "lighting": "dim amber filament sconces and dramatic sharp beam of brass flashlight cutting through darkness",
-        "important_objects": ["towering bookshelf 14-B", "brass pocket flashlight", "emerald serpent carved crest latch"],
-        "location_prompt_snippet": "subterranean Gothic college library stacks, towering double-height dark mahogany bookshelves, granite ribbed vaults, dust motes in flashlight beam"
+        "important_objects": [
+            "towering bookshelf 14-B",
+            "brass pocket flashlight",
+            "emerald serpent carved crest latch",
+        ],
+        "location_prompt_snippet": "subterranean Gothic college library stacks, towering double-height dark mahogany bookshelves, granite ribbed vaults, dust motes in flashlight beam",
     }
 
     loc_chamber = {
@@ -412,8 +429,12 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
         "time_period": "nineteenth-century engineering meets subterranean sanctum",
         "color_palette": "burnished brass, rich oxblood leather, glowing yellow lantern light, deep cavern shadow",
         "lighting": "warm flickering oil lantern glow and cold blue exterior corridor moonlight",
-        "important_objects": ["1894 vellum ledger with crimson wax seal", "brass difference engine levers", "hydraulic iron pipes"],
-        "location_prompt_snippet": "secret octagonal stone chamber beneath library, hexagonal slate floor, polished mahogany drafting table, oil lantern glow, antique brass instruments"
+        "important_objects": [
+            "1894 vellum ledger with crimson wax seal",
+            "brass difference engine levers",
+            "hydraulic iron pipes",
+        ],
+        "location_prompt_snippet": "secret octagonal stone chamber beneath library, hexagonal slate floor, polished mahogany drafting table, oil lantern glow, antique brass instruments",
     }
 
     demo_scenes = [
@@ -436,7 +457,7 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
             "mood": "Suspenseful, atmospheric, intellectual discovery",
             "image_prompt": f"20-year-old collegiate young man with wavy dark brown hair and dark charcoal wool coat, standing in subterranean Gothic college library stacks with towering dark mahogany bookshelves, shining a brass flashlight beam across antique leather folios, dust motes glowing in light, low-angle dramatic framing, {visual_style} aesthetic, masterpiece, 8k resolution, moody cinematic lighting",
             "negative_prompt": "blurry, low quality, distorted face, extra fingers, malformed hands, duplicate character, modern smartphones, fluorescent lights",
-            "image_url": "https://image.pollinations.ai/prompt/young%20man%20student%20in%20dark%20charcoal%20coat%20holding%20flashlight%20inside%20grand%20subterranean%20Gothic%20library%20with%20towering%20wooden%20bookshelves%2C%20cinematic%20dramatic%20lighting%2C%208k%20resolution?width=1024&height=640&nologo=true&seed=101"
+            "image_url": "https://image.pollinations.ai/prompt/young%20man%20student%20in%20dark%20charcoal%20coat%20holding%20flashlight%20inside%20grand%20subterranean%20Gothic%20library%20with%20towering%20wooden%20bookshelves%2C%20cinematic%20dramatic%20lighting%2C%208k%20resolution?width=1024&height=640&nologo=true&seed=101",
         },
         {
             "scene_id": "scene_demo_002",
@@ -457,7 +478,7 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
             "mood": "Secretive, tantalizing, threshold of discovery",
             "image_prompt": f"Close-up shot of a young man's hand wearing a silver serpent signet ring pressing an ornate carved emerald serpent latch on an antique mahogany wainscoting panel in a dark library, emerald eye gleaming with green light, dramatic chiaroscuro illumination, {visual_style} style, ultra-detailed, 8k resolution",
             "negative_prompt": "blurry, low quality, distorted fingers, extra fingers, malformed hands, cartoonish",
-            "image_url": "https://image.pollinations.ai/prompt/close%20up%20of%20young%20mans%20hand%20with%20silver%20serpent%20ring%20pressing%20ornate%20emerald%20serpent%20latch%20on%20antique%20carved%20wooden%20bookcase%2C%20green%20gemstone%20gleam%2C%20dramatic%20lighting%2C%208k?width=1024&height=640&nologo=true&seed=102"
+            "image_url": "https://image.pollinations.ai/prompt/close%20up%20of%20young%20mans%20hand%20with%20silver%20serpent%20ring%20pressing%20ornate%20emerald%20serpent%20latch%20on%20antique%20carved%20wooden%20bookcase%2C%20green%20gemstone%20gleam%2C%20dramatic%20lighting%2C%208k?width=1024&height=640&nologo=true&seed=102",
         },
         {
             "scene_id": "scene_demo_003",
@@ -478,7 +499,7 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
             "mood": "Mystical, historic, monumental reveal",
             "image_prompt": f"Secret doorway in antique library opening to reveal hidden stone steps into a circular chamber, 58-year-old woman with silver hair and spectacles holding a glowing oil lantern beside a 20-year-old young man in dark wool coat, warm amber lantern glow against cold granite arches, {visual_style} aesthetic, cinematic depth of field, 8k resolution",
             "negative_prompt": "blurry, low quality, duplicate figures, distorted faces, modern technology, extra limbs",
-            "image_url": "https://image.pollinations.ai/prompt/secret%20doorway%20in%20library%20bookshelf%20open%20revealing%20stone%20steps%20down%20to%20hidden%20room%2C%20older%20woman%20with%20silver%20hair%20holding%20oil%20lantern%20and%20young%20student%20in%20coat%2C%20warm%20lantern%20light%2C%20cinematic?width=1024&height=640&nologo=true&seed=103"
+            "image_url": "https://image.pollinations.ai/prompt/secret%20doorway%20in%20library%20bookshelf%20open%20revealing%20stone%20steps%20down%20to%20hidden%20room%2C%20older%20woman%20with%20silver%20hair%20holding%20oil%20lantern%20and%20young%20student%20in%20coat%2C%20warm%20lantern%20light%2C%20cinematic?width=1024&height=640&nologo=true&seed=103",
         },
         {
             "scene_id": "scene_demo_004",
@@ -499,7 +520,7 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
             "mood": "Intense psychological peril, confrontation, impending catastrophe",
             "image_prompt": f"Dramatic standoff inside secret subterranean library chamber, 45-year-old billionaire man in tailored navy cashmere coat with slicked dark hair confronting young student in wool coat across mahogany drafting table with antique leather ledger, bodyguards in background doorway, high-tension cinematic lighting, {visual_style} style, 8k masterpiece",
             "negative_prompt": "blurry, distorted facial features, extra arms, bad anatomy, cartoonish, watermark",
-            "image_url": "https://image.pollinations.ai/prompt/dramatic%20confrontation%20inside%20antique%20subterranean%20stone%20vault%2C%20tall%20billionaire%20in%20cashmere%20overcoat%20facing%20young%20student%20and%20older%20archivist%20across%20table%20with%20ancient%20book%2C%20tense%20cinematic%20lighting?width=1024&height=640&nologo=true&seed=104"
+            "image_url": "https://image.pollinations.ai/prompt/dramatic%20confrontation%20inside%20antique%20subterranean%20stone%20vault%2C%20tall%20billionaire%20in%20cashmere%20overcoat%20facing%20young%20student%20and%20older%20archivist%20across%20table%20with%20ancient%20book%2C%20tense%20cinematic%20lighting?width=1024&height=640&nologo=true&seed=104",
         },
         {
             "scene_id": "scene_demo_005",
@@ -520,8 +541,8 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
             "mood": "Climactic, electrifying, irreversible defiance",
             "image_prompt": f"Kinetic climactic shot of young man with wavy hair in dark coat pulling a heavy brass mechanical lever downward in a stone chamber, fine mist and surging water spraying through floor grates, dramatic splashing light, billionaire man in coat recoiling in background, intense action, {visual_style} aesthetic, cinematic motion, 8k resolution",
             "negative_prompt": "blurry, low quality, deformed hands, extra fingers, cartoonish, watermark, text",
-            "image_url": "https://image.pollinations.ai/prompt/young%20man%20in%20dark%20coat%20pulling%20heavy%20brass%20industrial%20lever%20in%20stone%20chamber%2C%20water%20mist%20and%20spray%20rising%20dramatically%2C%20intense%20cinematic%20action%2C%20dramatic%20lighting%2C%208k?width=1024&height=640&nologo=true&seed=105"
-        }
+            "image_url": "https://image.pollinations.ai/prompt/young%20man%20in%20dark%20coat%20pulling%20heavy%20brass%20industrial%20lever%20in%20stone%20chamber%2C%20water%20mist%20and%20spray%20rising%20dramatically%2C%20intense%20cinematic%20action%2C%20dramatic%20lighting%2C%208k?width=1024&height=640&nologo=true&seed=105",
+        },
     ]
 
     return {
@@ -529,5 +550,5 @@ def get_demo_story_scenes(visual_style: str = "Cinematic", target_count: int = 5
         "visual_style": visual_style,
         "characters": [julian, vance, reed],
         "locations": [loc_stacks, loc_chamber],
-        "scenes": demo_scenes[:target_count]
+        "scenes": demo_scenes[:target_count],
     }

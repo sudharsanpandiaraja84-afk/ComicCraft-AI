@@ -1,8 +1,9 @@
-import json
-from typing import List, Optional
 from schemas import (
-    StoryGenerateRequest, StoryBlueprint, StoryCharacter,
-    UserInputCharacter, AdvancedStoryOptions
+    AdvancedStoryOptions,
+    StoryBlueprint,
+    StoryCharacter,
+    StoryGenerateRequest,
+    StoryRewriteRequest,
 )
 
 # Core System Instruction per requirements
@@ -35,19 +36,22 @@ GENRE_INTELLIGENCE_RULES = {
     "Slice of Life": "Highlight delicate nuances of everyday existence, gentle poignancy, quiet domestic moments, observational beauty, and subtle character revelations.",
     "Psychological": "Explore fractured perceptions, unreliable narration, memory distortion, guilt, paranoia, interior monologues, and shifting mental landscapes.",
     "Action": "Deliver kinetic fight choreography, visceral sensory impacts, dynamic tactical maneuvers, spatial clarity during chaos, and adrenaline-fueled showdowns.",
-    "Educational": "Seamlessly weave factual, historical, or scientific principles into an engaging storyline where knowledge becomes the key to solving the narrative problem."
+    "Educational": "Seamlessly weave factual, historical, or scientific principles into an engaging storyline where knowledge becomes the key to solving the narrative problem.",
 }
 
 LENGTH_GUIDANCE = {
     "Short": "Target approximately 800 to 1,200 words. Keep scenes focused, economical, and punchy.",
     "Medium": "Target approximately 1,500 to 2,500 words. Develop multiple scene transitions, nuanced dialogue, and layered rising action.",
     "Long": "Target approximately 3,000 to 5,000 words. Deliver expansive scenes, subplots, rich character interactions, and meticulous build-up.",
-    "Very Long": "Target 5,000+ words (or maximum token capacity). Deliver an epic narrative canvas with rich world-building and multi-phase confrontations."
+    "Very Long": "Target 5,000+ words (or maximum token capacity). Deliver an epic narrative canvas with rich world-building and multi-phase confrontations.",
 }
+
 
 def build_blueprint_prompt(req: StoryGenerateRequest) -> str:
     """Prompt for generating the comprehensive Story Blueprint."""
-    genre_guidance = GENRE_INTELLIGENCE_RULES.get(req.genre, f"Embrace the unique conventions and tone of {req.genre}.")
+    genre_guidance = GENRE_INTELLIGENCE_RULES.get(
+        req.genre, f"Embrace the unique conventions and tone of {req.genre}."
+    )
     if req.custom_genre:
         genre_guidance = f"Tailor the narrative to the custom genre: {req.custom_genre}."
 
@@ -55,21 +59,23 @@ def build_blueprint_prompt(req: StoryGenerateRequest) -> str:
     if req.characters:
         char_lines = []
         for c in req.characters:
-            char_lines.append(f"- Name: {c.name} | Role: {c.role} | Age: {c.age} | Personality: {c.personality} | Gender: {c.gender} | Details: {c.details}")
+            char_lines.append(
+                f"- Name: {c.name} | Role: {c.role} | Age: {c.age} | Personality: {c.personality} | Gender: {c.gender} | Details: {c.details}"
+            )
         char_info = "User-Provided Characters to feature:\n" + "\n".join(char_lines)
 
     adv = req.advanced_options or AdvancedStoryOptions()
     adv_context = f"""
 Advanced Parameters:
 - Number of characters: {adv.num_characters}
-- Setting / Environment: {adv.setting or 'To be established organically'}
-- Time Period: {adv.time_period or 'Contemporary'}
-- Location: {adv.location or 'Organically suited to the premise'}
+- Setting / Environment: {adv.setting or "To be established organically"}
+- Time Period: {adv.time_period or "Contemporary"}
+- Location: {adv.location or "Organically suited to the premise"}
 - Story Complexity: {adv.complexity}
 - Dialogue Amount: {adv.dialogue_amount}
 - Description Level: {adv.description_level}
-- Plot Twist Preference: {adv.plot_twist or 'AI craft a surprising twist'}
-- Central Moral / Message: {adv.moral or 'Organically emergent'}
+- Plot Twist Preference: {adv.plot_twist or "AI craft a surprising twist"}
+- Central Moral / Message: {adv.moral or "Organically emergent"}
 """
 
     prompt = f"""Analyze the user's short story idea and create a structured STORY BLUEPRINT in valid JSON.
@@ -83,7 +89,7 @@ PARAMETERS:
 - Tone(s): {", ".join(req.tones)}
 - Writing Style: {req.custom_style or req.writing_style}
 - Target Audience: {req.target_audience}
-- Story Length Target: {req.story_length} ({LENGTH_GUIDANCE.get(req.story_length, '1500-2500 words')})
+- Story Length Target: {req.story_length} ({LENGTH_GUIDANCE.get(req.story_length, "1500-2500 words")})
 - Ending Type Required: {req.ending_preference}
 - Characters:
 {char_info}
@@ -112,12 +118,16 @@ Return a valid JSON object matching this exact structure:
 Respond ONLY with valid JSON. No conversational fluff or markdown outside the code block."""
     return prompt
 
+
 def build_character_generation_prompt(req: StoryGenerateRequest, blueprint: StoryBlueprint) -> str:
     """Prompt for generating the detailed Character Bible."""
     user_char_details = ""
     if req.characters:
-        user_char_details = "Ensure you faithfully integrate the user's specified characters:\n" + "\n".join(
-            [f"- {c.name} ({c.role}): {c.personality}, {c.details}" for c in req.characters]
+        user_char_details = (
+            "Ensure you faithfully integrate the user's specified characters:\n"
+            + "\n".join(
+                [f"- {c.name} ({c.role}): {c.personality}, {c.details}" for c in req.characters]
+            )
         )
 
     prompt = f"""Generate a detailed Character Bible for the story '{blueprint.title}'.
@@ -159,23 +169,28 @@ Return a JSON array of character objects with this schema:
 Respond ONLY with a valid JSON array."""
     return prompt
 
+
 def build_full_story_prompt(
-    req: StoryGenerateRequest,
-    blueprint: StoryBlueprint,
-    characters: List[StoryCharacter]
+    req: StoryGenerateRequest, blueprint: StoryBlueprint, characters: list[StoryCharacter]
 ) -> str:
     """Prompt for writing the complete narrative."""
     genre_rules = GENRE_INTELLIGENCE_RULES.get(req.genre, "")
     if req.custom_genre:
         genre_rules += f" Maintain complete immersion in {req.custom_genre}."
 
-    char_summary = "\n".join([
-        f"- **{c.name}** ({c.role}): {c.personality}. Goal: {c.goal}. Arc: {c.character_arc}"
-        for c in characters
-    ])
+    char_summary = "\n".join(
+        [
+            f"- **{c.name}** ({c.role}): {c.personality}. Goal: {c.goal}. Arc: {c.character_arc}"
+            for c in characters
+        ]
+    )
 
-    style_instruction = req.custom_style if req.custom_style else f"Adopt a {req.writing_style} writing style."
-    length_instruction = LENGTH_GUIDANCE.get(req.story_length, "Target approximately 1,500 to 2,500 words.")
+    style_instruction = (
+        req.custom_style if req.custom_style else f"Adopt a {req.writing_style} writing style."
+    )
+    length_instruction = LENGTH_GUIDANCE.get(
+        req.story_length, "Target approximately 1,500 to 2,500 words."
+    )
 
     prompt = f"""You are ready to write the complete, full story for:
 "{blueprint.title}"
@@ -219,10 +234,9 @@ Output your response as JSON in this format:
 """
     return prompt
 
+
 def build_quality_check_prompt(
-    story_text: str,
-    blueprint: StoryBlueprint,
-    characters: List[StoryCharacter]
+    story_text: str, blueprint: StoryBlueprint, characters: list[StoryCharacter]
 ) -> str:
     """Prompt to analyze story quality across plot, character, genre, and structure."""
     prompt = f"""Act as a senior literary editor and analyze the following story draft.
@@ -270,10 +284,9 @@ Return a valid JSON object matching this schema:
 Respond ONLY with valid JSON."""
     return prompt
 
+
 def build_improve_story_prompt(
-    story_text: str,
-    focus_area: str,
-    instructions: Optional[str] = ""
+    story_text: str, focus_area: str, instructions: str | None = ""
 ) -> str:
     """Prompt for improving specific dimensions of the story."""
     prompt = f"""You are an award-winning fiction editor.
@@ -300,10 +313,9 @@ Return JSON:
 }}"""
     return prompt
 
+
 def build_continue_story_prompt(
-    previous_story: str,
-    continuation_prompt: str,
-    target_length: str = "Medium"
+    previous_story: str, continuation_prompt: str, target_length: str = "Medium"
 ) -> str:
     """Prompt for continuing the story seamlessly."""
     prompt = f"""Continue the story seamlessly from where it left off.
@@ -330,6 +342,7 @@ Return JSON:
 }}"""
     return prompt
 
+
 def build_chapter_prompt(
     previous_context: str,
     chapter_number: int,
@@ -338,7 +351,7 @@ def build_chapter_prompt(
     desired_length: str,
     genre: str,
     tone: str,
-    style: str
+    style: str,
 ) -> str:
     """Prompt for generating a specific chapter maintaining continuity."""
     prompt = f"""Write Chapter {chapter_number}: '{chapter_title}' for an ongoing {genre} novel.
@@ -367,11 +380,9 @@ Return JSON:
 }}"""
     return prompt
 
+
 def build_section_edit_prompt(
-    selected_text: str,
-    full_context: str,
-    action: str,
-    tone_guidance: Optional[str] = ""
+    selected_text: str, full_context: str, action: str, tone_guidance: str | None = ""
 ) -> str:
     """Prompt for editing a specific sentence or paragraph in-place."""
     action_instructions = {
@@ -379,7 +390,7 @@ def build_section_edit_prompt(
         "improve_paragraph": "Elevate sentence flow, cadence, vocabulary, and emotional resonance.",
         "make_dialogue_better": "Make dialogue sharper, more authentic, characterful, and packed with subtext.",
         "make_description_more_detailed": "Add vivid sensory imagery, atmosphere, and environmental detail.",
-        "change_tone": f"Adjust tone to match guidance: {tone_guidance or 'more dramatic and intense'}."
+        "change_tone": f"Adjust tone to match guidance: {tone_guidance or 'more dramatic and intense'}.",
     }
 
     instruction = action_instructions.get(action, "Improve this excerpt.")
@@ -409,14 +420,16 @@ Return JSON:
 }}"""
     return prompt
 
+
 # ============================================================================
 # FEATURE 1: STORY REGENERATION PROMPTS
 # ============================================================================
 
+
 def build_regenerate_story_prompt(
     original_idea: str,
     genre: str,
-    tones: List[str],
+    tones: list[str],
     writing_style: str,
     target_audience: str,
     story_length: str,
@@ -424,14 +437,16 @@ def build_regenerate_story_prompt(
     previous_title: str,
     previous_summary: str,
     regeneration_option: str,
-    custom_instruction: str = ""
+    custom_instruction: str = "",
 ) -> str:
     """
     Constructs prompt for regenerating a substantially different story version.
     Explicitly instructs Gemini not to copy paragraphs, scenes, or plot progression.
     """
     genre_rules = GENRE_INTELLIGENCE_RULES.get(genre, f"Honor the conventions of {genre}.")
-    length_instruction = LENGTH_GUIDANCE.get(story_length, "Target approximately 1,500 to 2,500 words.")
+    length_instruction = LENGTH_GUIDANCE.get(
+        story_length, "Target approximately 1,500 to 2,500 words."
+    )
 
     prompt = f"""You are tasked with generating a BRAND NEW, SUBSTANTIALLY DIFFERENT narrative version of the following story premise.
 
@@ -448,7 +463,7 @@ ENDING TYPE: {ending_preference}
 
 PREVIOUS VERSION TO AVOID DUPLICATING:
 - Previous Title: "{previous_title}"
-- Previous Story Summary: {previous_summary or 'A classic interpretation of the premise.'}
+- Previous Story Summary: {previous_summary or "A classic interpretation of the premise."}
 
 REGENERATION ANGLE:
 Mode: {regeneration_option}
@@ -495,13 +510,14 @@ Return JSON:
 Respond ONLY with valid JSON."""
     return prompt
 
+
 def build_compare_versions_prompt(
     version_a_title: str,
     version_a_summary: str,
     version_a_story: str,
     version_b_title: str,
     version_b_summary: str,
-    version_b_story: str
+    version_b_story: str,
 ) -> str:
     """Prompt to analytically compare two story versions."""
     prompt = f"""Compare these two distinct story versions based on the same premise and provide an objective editorial breakdown.
@@ -533,6 +549,7 @@ Return JSON:
 Respond ONLY with valid JSON."""
     return prompt
 
+
 # ============================================================================
 # FEATURE 2: STORY TO IMAGE SCENE & PROFILE PROMPTS
 # ============================================================================
@@ -549,8 +566,9 @@ STYLE_NEGATIVE_PROMPTS = {
     "3D Animation": "photorealistic photograph, 2d sketch, extra limbs, deformed face, watermark, text",
     "Fantasy": "modern technology, cars, airplanes, bad anatomy, extra fingers, malformed hands, text, watermark",
     "Noir": "bright cheerful pastel colors, cartoon, bad anatomy, extra fingers, watermark, text, modern neon",
-    "Cyberpunk": "medieval elements, bad anatomy, extra fingers, malformed hands, watermark, text, low detail"
+    "Cyberpunk": "medieval elements, bad anatomy, extra fingers, malformed hands, watermark, text, low detail",
 }
+
 
 def build_scene_extraction_prompt(
     story_title: str,
@@ -558,7 +576,7 @@ def build_scene_extraction_prompt(
     genre: str,
     visual_style: str = "Cinematic",
     scope: str = "Entire Story",
-    target_scene_count: int = 5
+    target_scene_count: int = 5,
 ) -> str:
     """
     Extracts key sequential visual scenes, locked character visual profiles,
@@ -566,7 +584,7 @@ def build_scene_extraction_prompt(
     """
     negative_prompt_default = STYLE_NEGATIVE_PROMPTS.get(
         visual_style,
-        "blurry, low quality, distorted face, extra fingers, malformed hands, duplicate character, inconsistent clothing, watermark, text, logo"
+        "blurry, low quality, distorted face, extra fingers, malformed hands, duplicate character, inconsistent clothing, watermark, text, logo",
     )
 
     prompt = f"""You are a master film art director and story visualizer.
@@ -647,3 +665,27 @@ Return JSON:
 Respond ONLY with valid JSON."""
     return prompt
 
+
+def build_rewrite_prompt(req: StoryRewriteRequest) -> str:
+    """Prompt for rewriting a story with modified genre, tone, style, or ending."""
+    return f"""Rewrite the following story with these new creative directions:
+- New Genre: {req.new_genre or req.original_genre}
+- New Tone: {req.new_tone or "Preserve"}
+- New Writing Style: {req.new_style or "Preserve"}
+- New Ending Preference: {req.new_ending or "Preserve"}
+- Specific Guidance: {req.instructions or "Re-imagine the narrative with maximum creative fidelity to the new parameters."}
+
+ORIGINAL STORY:
+{req.story}
+
+Return JSON:
+{{
+  "rewritten_title": "Adapted or refined title",
+  "rewritten_story": "Full rewritten narrative text with well-crafted paragraphs...",
+  "notes": "Brief notes on how the genre/tone/style was transformed"
+}}"""
+
+
+# Aliases for convenience and backward compatibility
+build_characters_prompt = build_character_generation_prompt
+build_continue_prompt = build_continue_story_prompt

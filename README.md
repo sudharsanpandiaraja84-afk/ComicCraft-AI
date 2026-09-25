@@ -6,6 +6,9 @@
 [![React](https://img.shields.io/badge/Frontend-React%2018%20%2B%20Vite%20%2B%20TypeScript-61DAFB.svg?style=flat&logo=react)](https://react.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-38B2AC.svg?style=flat&logo=tailwind-css)](https://tailwindcss.com)
 [![Google Gemini API](https://img.shields.io/badge/AI-Google%20Gemini%202.5%20%2F%201.5-4285F4.svg?style=flat&logo=google)](https://aistudio.google.com)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?style=flat&logo=docker)](Dockerfile)
+[![Render](https://img.shields.io/badge/Render-Deploy%20Ready-46E3B7.svg?style=flat&logo=render)](render.yaml)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF.svg?style=flat&logo=githubactions)](.github/workflows/ci.yml)
 
 ---
 
@@ -197,6 +200,30 @@ python generate_story.py --demo
 # Run with custom idea and Gemini API key
 python generate_story.py --idea "A young clockmaker discovers a gear that turns backward in time." --genre "Fantasy" --style "Literary" --output "clockmaker_story.txt"
 ```
+
+---
+
+### 6. Production Deployment with Docker & Render
+
+StoryForge AI is containerized as a unified multi-stage Docker build and ready for one-click deployment on Render.
+
+#### Quick Deploy on Render:
+1. Push this repository to GitHub or GitLab.
+2. In [Render Dashboard](https://dashboard.render.com), click **New +** -> **Blueprint**.
+3. Connect your repository. Render automatically reads [`render.yaml`](render.yaml).
+4. Enter your `GEMINI_API_KEY` secret when prompted, and click **Apply**.
+
+#### Local Docker Testing:
+```bash
+# Build the production image
+docker build -t storyforge-ai .
+
+# Run container locally
+docker run -p 8000:8000 -e GEMINI_API_KEY="your-api-key" storyforge-ai
+```
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for full deployment instructions, GitHub Actions CI/CD pipeline breakdown, and automated webhook deploy hook configuration.
+
 
 ---
 

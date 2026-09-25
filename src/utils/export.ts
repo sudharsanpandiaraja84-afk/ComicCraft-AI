@@ -12,6 +12,11 @@ export function downloadFile(filename: string, content: string, mimeType: string
   URL.revokeObjectURL(url);
 }
 
+// Aliases for export utilities
+export const downloadAsTxt = exportStoryTxt;
+export const downloadAsJson = exportStoryJson;
+export const downloadAsPdf = exportStoryPdf;
+
 export function exportStoryTxt(story: CompleteStoryResponse) {
   const lines: string[] = [
     `========================================================================`,

@@ -1,23 +1,24 @@
+import asyncio
+import logging
 import os
 import urllib.parse
-import logging
-from typing import List, Dict, Any, Optional
+from typing import Any
+
 import httpx
-from schemas import (
-    VisualScene, CharacterVisualProfile, GeneratedImageResponse
-)
+from schemas import CharacterVisualProfile, GeneratedImageResponse, VisualScene
 
 logger = logging.getLogger("storyforge.images")
 
 # Image generation provider options: "pollinations" (free, instant SDXL/Flux), "custom", "none"
 IMAGE_PROVIDER = os.environ.get("IMAGE_PROVIDER", "pollinations").strip().lower()
 
+
 async def generate_scene_image(
     scene_id: str,
     prompt: str,
-    negative_prompt: Optional[str] = None,
+    negative_prompt: str | None = None,
     visual_style: str = "Cinematic",
-    timeout_sec: float = 25.0
+    timeout_sec: float = 25.0,
 ) -> GeneratedImageResponse:
     """
     Modular image generation function. Generates a scene image using the active
@@ -30,7 +31,7 @@ async def generate_scene_image(
             prompt_used="",
             negative_prompt_used=negative_prompt or "",
             status="error",
-            message="Image prompt is empty."
+            message="Image prompt is empty.",
         )
 
     clean_prompt = prompt.strip()
@@ -43,7 +44,7 @@ async def generate_scene_image(
             prompt_used=clean_prompt,
             negative_prompt_used=clean_neg,
             status="unconfigured",
-            message="Image generation is not configured yet."
+            message="Image generation is not configured yet.",
         )
 
     # Use Pollinations AI image service (Fast, free, reliable SDXL/Flux rendering)
@@ -65,7 +66,7 @@ async def generate_scene_image(
                     prompt_used=clean_prompt,
                     negative_prompt_used=clean_neg,
                     status="success",
-                    message="Scene image generated successfully."
+                    message="Scene image generated successfully.",
                 )
 
         return GeneratedImageResponse(
@@ -74,7 +75,7 @@ async def generate_scene_image(
             prompt_used=clean_prompt,
             negative_prompt_used=clean_neg,
             status="success",
-            message="Scene image synthesized."
+            message="Scene image synthesized.",
         )
     except Exception as e:
         logger.warning(f"Image generation fallback for scene {scene_id}: {e}")
@@ -85,46 +86,58 @@ async def generate_scene_image(
             prompt_used=clean_prompt,
             negative_prompt_used=clean_neg,
             status="unconfigured",
-            message="Image generation is not configured yet. You can copy the generated prompt below."
+            message="Image generation is not configured yet. You can copy the generated prompt below.",
         )
 
+
 async def generate_story_images(
-    scenes: List[VisualScene],
-    visual_style: str = "Cinematic"
-) -> List[GeneratedImageResponse]:
-    """Generates images sequentially for all extracted scenes."""
-    results = []
-    for scene in scenes:
-        res = await generate_scene_image(
+    scenes: list[VisualScene], visual_style: str = "Cinematic"
+) -> list[GeneratedImageResponse]:
+    """Generates images concurrently in parallel for all extracted scenes."""
+    tasks = [
+        generate_scene_image(
             scene_id=scene.scene_id,
             prompt=scene.image_prompt,
             negative_prompt=scene.negative_prompt,
-            visual_style=visual_style
+            visual_style=visual_style,
         )
-        results.append(res)
-    return results
+        for scene in scenes
+    ]
+    return list(await asyncio.gather(*tasks))
+
 
 async def generate_character_reference(
-    character: CharacterVisualProfile,
-    visual_style: str = "Cinematic"
+    character: CharacterVisualProfile, visual_style: str = "Cinematic"
 ) -> GeneratedImageResponse:
     """Generates a character reference concept portrait."""
     char_prompt = f"Portrait character concept of {character.name}, {character.appearance_prompt_snippet}, {visual_style} style, character design sheet, studio lighting"
     return await generate_scene_image(
         scene_id=character.name.lower().replace(" ", "_"),
         prompt=char_prompt,
-        visual_style=visual_style
+        visual_style=visual_style,
     )
 
-def get_image_service_status() -> Dict[str, Any]:
+
+def get_image_service_status() -> dict[str, Any]:
     """Returns current image generation provider capability."""
     return {
         "status": "online" if IMAGE_PROVIDER != "none" else "unconfigured",
         "provider": IMAGE_PROVIDER,
         "supported_styles": [
-            "Cinematic", "Anime", "Manga", "Western Comic", "Digital Art",
-            "Semi-realistic", "Realistic", "Watercolor", "3D Animation",
-            "Fantasy", "Noir", "Cyberpunk"
+            "Cinematic",
+            "Anime",
+            "Manga",
+            "Western Comic",
+            "Digital Art",
+            "Semi-realistic",
+            "Realistic",
+            "Watercolor",
+            "3D Animation",
+            "Fantasy",
+            "Noir",
+            "Cyberpunk",
         ],
-        "message": "AI Image Generation is active and ready." if IMAGE_PROVIDER != "none" else "Image generation is not configured yet."
+        "message": "AI Image Generation is active and ready."
+        if IMAGE_PROVIDER != "none"
+        else "Image generation is not configured yet.",
     }

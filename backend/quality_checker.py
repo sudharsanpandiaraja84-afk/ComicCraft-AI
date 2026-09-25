@@ -1,16 +1,13 @@
-import re
 import logging
-from typing import List, Optional
-from schemas import (
-    StoryBlueprint, StoryCharacter, QualityCheckReport
-)
+import re
+
+from schemas import QualityCheckReport, StoryBlueprint, StoryCharacter
 
 logger = logging.getLogger("storyforge.quality")
 
+
 def evaluate_quality_heuristics(
-    story_text: str,
-    blueprint: StoryBlueprint,
-    characters: List[StoryCharacter]
+    story_text: str, blueprint: StoryBlueprint, characters: list[StoryCharacter]
 ) -> QualityCheckReport:
     """
     Performs analytical evaluation of the narrative draft.
@@ -22,12 +19,12 @@ def evaluate_quality_heuristics(
     """
     paragraphs = [p.strip() for p in story_text.split("\n\n") if p.strip()]
     total_words = len(story_text.split())
-    has_dialogue = ('"' in story_text) or ('“' in story_text) or ("'" in story_text)
-    
+    has_dialogue = ('"' in story_text) or ("“" in story_text) or ("'" in story_text)
+
     # Check character presence
     characters_present = 0
     for char in characters:
-        if re.search(r'\b' + re.escape(char.name) + r'\b', story_text, re.IGNORECASE):
+        if re.search(r"\b" + re.escape(char.name) + r"\b", story_text, re.IGNORECASE):
             characters_present += 1
 
     char_ratio = characters_present / max(1, len(characters))
@@ -54,7 +51,7 @@ def evaluate_quality_heuristics(
         f"Dynamic narrative arc transitioning smoothly through the {blueprint.plot.climax[:35]}... climax.",
         f"Consistent character voice matching established motivations for {characters[0].name if characters else 'protagonist'}.",
         f"Authentic genre fidelity reflecting key {blueprint.genre} atmospheric tropes.",
-        "Compelling dialogue beats that advance interpersonal tension and story stakes."
+        "Compelling dialogue beats that advance interpersonal tension and story stakes.",
     ]
 
     critique = (
@@ -65,7 +62,7 @@ def evaluate_quality_heuristics(
 
     improvements_made = [
         "Balanced paragraph transitions between exposition and active character motion.",
-        "Refined atmospheric cues to heighten emotional resonance."
+        "Refined atmospheric cues to heighten emotional resonance.",
     ]
 
     return QualityCheckReport(
@@ -81,5 +78,5 @@ def evaluate_quality_heuristics(
         originality_score=min(98, orig_score),
         strengths=strengths,
         critique=critique,
-        improvements_made=improvements_made
+        improvements_made=improvements_made,
     )

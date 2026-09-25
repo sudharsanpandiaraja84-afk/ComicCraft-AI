@@ -1,34 +1,33 @@
-import math
 import logging
-from typing import Optional
-from datetime import datetime
-from schemas import (
-    StoryGenerateRequest, CompleteStoryResponse, Chapter
-)
-import gemini_service
+import math
+from datetime import UTC, datetime
+
 import demo_data
-import quality_checker
+import gemini_service
+from schemas import Chapter, CompleteStoryResponse, StoryGenerateRequest
 
 logger = logging.getLogger("storyforge.generator")
+
 
 def calculate_reading_time(word_count: int) -> str:
     """Calculates approximate reading time based on standard 220 wpm."""
     minutes = max(1, math.ceil(word_count / 220))
     return f"{minutes} min read"
 
+
 async def run_story_generation_pipeline(req: StoryGenerateRequest) -> CompleteStoryResponse:
     """
     Executes the multi-stage AI Story Generation Pipeline:
-    USER INPUT -> INPUT ANALYSIS -> STORY BLUEPRINT -> CHARACTER DEVELOPMENT 
+    USER INPUT -> INPUT ANALYSIS -> STORY BLUEPRINT -> CHARACTER DEVELOPMENT
     -> FULL STORY GENERATION -> QUALITY CHECK -> FINAL STORY.
     """
     api_key = gemini_service.get_gemini_api_key(req.api_key)
-    
+
     # Fallback to Demo Mode if requested or if no API key is provided
     if req.demo_mode or not api_key:
         logger.info("Operating in Demo Mode (either explicitly requested or no API key present).")
         demo = demo_data.get_demo_project()
-        
+
         # If user provided a custom idea, adapt the demo structure slightly so it acknowledges their input
         if req.story_idea and "student discovers" not in req.story_idea.lower():
             demo.title = f"Chronicles of {req.genre}: The Untold Path"
@@ -38,7 +37,9 @@ async def run_story_generation_pipeline(req: StoryGenerateRequest) -> CompleteSt
             demo.target_audience = req.target_audience
             demo.blueprint.title = demo.title
             demo.blueprint.genre = demo.genre
-            demo.blueprint.premise = f"Expanded from idea: '{req.story_idea}' in {demo.genre} genre."
+            demo.blueprint.premise = (
+                f"Expanded from idea: '{req.story_idea}' in {demo.genre} genre."
+            )
         return demo
 
     logger.info(f"Stage 1 & 2: Generating Story Blueprint for idea: '{req.story_idea[:50]}...'")
@@ -54,10 +55,7 @@ async def run_story_generation_pipeline(req: StoryGenerateRequest) -> CompleteSt
 
     logger.info("Stage 5: Conducting AI Story Quality Check...")
     quality_report = await gemini_service.check_story_quality(
-        story_text=story_text,
-        blueprint=blueprint,
-        characters=characters,
-        api_key=api_key
+        story_text=story_text, blueprint=blueprint, characters=characters, api_key=api_key
     )
 
     word_count = len(story_text.split())
@@ -68,7 +66,7 @@ async def run_story_generation_pipeline(req: StoryGenerateRequest) -> CompleteSt
         title="Chapter 1: The Inciting Threshold",
         content=story_text,
         word_count=word_count,
-        summary=blueprint.plot.introduction
+        summary=blueprint.plot.introduction,
     )
 
     response = CompleteStoryResponse(
@@ -86,7 +84,7 @@ async def run_story_generation_pipeline(req: StoryGenerateRequest) -> CompleteSt
         quality_check=quality_report,
         chapters=[first_chapter],
         is_demo=False,
-        created_at=datetime.utcnow().strftime("%B %d, %Y")
+        created_at=datetime.now(UTC).strftime("%B %d, %Y"),
     )
 
     return response

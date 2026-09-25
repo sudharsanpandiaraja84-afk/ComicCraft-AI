@@ -1,0 +1,33 @@
+# ==============================================================================
+# Render Blueprint Specification for StoryForge AI
+# ==============================================================================
+# Deploy StoryForge AI (FastAPI + React SPA) seamlessly on Render.
+#
+# Deployment Instructions:
+# 1. Push your repository to GitHub or GitLab.
+# 2. In the Render Dashboard (https://dashboard.render.com), click "New +" -> "Blueprint".
+# 3. Connect this repository. Render will automatically detect this `render.yaml`.
+# 4. Fill in your `GEMINI_API_KEY` secret when prompted (sync: false).
+# 5. Click "Apply" to build the multi-stage Docker container and deploy the app!
+# ==============================================================================
+
+services:
+  - type: web
+    name: storyforge-ai
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: HOST
+        value: 0.0.0.0
+      - key: ENV
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false # Sensitive API key; provide in Render dashboard
+      - key: IMAGE_PROVIDER
+        value: pollinations

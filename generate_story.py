@@ -7,19 +7,17 @@ Usage:
     python generate_story.py --idea "A student discovers a hidden room beneath his college library." --genre "Mystery"
 """
 
-import sys
-import os
-import asyncio
-import json
 import argparse
+import asyncio
+import contextlib
+import os
+import sys
 from pathlib import Path
 
 # Ensure UTF-8 output on Windows console
 if sys.platform == "win32":
-    try:
+    with contextlib.suppress(Exception):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:
-        pass
 
 
 # Add backend directory to Python path
@@ -28,25 +26,67 @@ if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
-from schemas import StoryGenerateRequest
-import gemini_service
 import story_generator
+from schemas import StoryGenerateRequest
+
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="StoryForge AI — Turn a Simple Idea Into a Complete Story")
-    parser.add_argument("--idea", "-i", type=str, default="A college student discovers a mysterious room inside his college library.", help="Story premise / idea")
-    parser.add_argument("--genre", "-g", type=str, default="Mystery", help="Genre (Mystery, Fantasy, Sci-Fi, Horror, Thriller, etc.)")
-    parser.add_argument("--tones", "-t", nargs="+", default=["Suspenseful", "Mysterious"], help="Tones (Suspenseful, Dark, Emotional, etc.)")
-    parser.add_argument("--style", "-s", type=str, default="Cinematic", help="Writing Style (Cinematic, Literary, Descriptive, etc.)")
-    parser.add_argument("--length", "-l", type=str, default="Medium", help="Length (Short, Medium, Long, Very Long)")
-    parser.add_argument("--audience", "-a", type=str, default="Young Adults", help="Audience (Children, Teenagers, Young Adults, Adults, General Audience)")
-    parser.add_argument("--ending", "-e", type=str, default="Twist Ending", help="Ending (Happy Ending, Twist Ending, Tragic Ending, Open Ending, etc.)")
+    parser = argparse.ArgumentParser(
+        description="StoryForge AI — Turn a Simple Idea Into a Complete Story"
+    )
+    parser.add_argument(
+        "--idea",
+        "-i",
+        type=str,
+        default="A college student discovers a mysterious room inside his college library.",
+        help="Story premise / idea",
+    )
+    parser.add_argument(
+        "--genre",
+        "-g",
+        type=str,
+        default="Mystery",
+        help="Genre (Mystery, Fantasy, Sci-Fi, Horror, Thriller, etc.)",
+    )
+    parser.add_argument(
+        "--tones",
+        "-t",
+        nargs="+",
+        default=["Suspenseful", "Mysterious"],
+        help="Tones (Suspenseful, Dark, Emotional, etc.)",
+    )
+    parser.add_argument(
+        "--style",
+        "-s",
+        type=str,
+        default="Cinematic",
+        help="Writing Style (Cinematic, Literary, Descriptive, etc.)",
+    )
+    parser.add_argument(
+        "--length", "-l", type=str, default="Medium", help="Length (Short, Medium, Long, Very Long)"
+    )
+    parser.add_argument(
+        "--audience",
+        "-a",
+        type=str,
+        default="Young Adults",
+        help="Audience (Children, Teenagers, Young Adults, Adults, General Audience)",
+    )
+    parser.add_argument(
+        "--ending",
+        "-e",
+        type=str,
+        default="Twist Ending",
+        help="Ending (Happy Ending, Twist Ending, Tragic Ending, Open Ending, etc.)",
+    )
     parser.add_argument("--api-key", "-k", type=str, help="Google Gemini API Key")
     parser.add_argument("--demo", action="store_true", help="Force demo mode")
     parser.add_argument("--output", "-o", type=str, help="Output file path (.txt or .json)")
     return parser.parse_args()
+
 
 async def main():
     args = parse_arguments()
@@ -72,7 +112,7 @@ async def main():
         target_audience=args.audience,
         ending_preference=args.ending,
         api_key=args.api_key,
-        demo_mode=args.demo
+        demo_mode=args.demo,
     )
 
     print("\n[1/5] Analyzing Premise & Constructing Story Blueprint...")
@@ -91,7 +131,9 @@ async def main():
     print("✓ Character consistency")
     print("✓ Genre alignment")
     print("✓ Story structure")
-    print(f"Score: {result.quality_check.plot_coherence_score}% Coherence | {result.quality_check.genre_fidelity_score}% Genre Fidelity")
+    print(
+        f"Score: {result.quality_check.plot_coherence_score}% Coherence | {result.quality_check.genre_fidelity_score}% Genre Fidelity"
+    )
     print("-" * 70)
     print("\nNARRATIVE:\n")
     print(result.story)
@@ -104,6 +146,7 @@ async def main():
         else:
             out_path.write_text(f"{result.title}\n\n{result.story}", encoding="utf-8")
         print(f"Output saved successfully to: {out_path.resolve()}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

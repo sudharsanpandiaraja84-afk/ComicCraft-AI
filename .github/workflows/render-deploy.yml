@@ -1,0 +1,47 @@
+name: Deploy to Render
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Trigger Render Deploy Hook
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success') }}
+    steps:
+      - name: Verify Deploy Hook Secret
+        id: check_hook
+        env:
+          RENDER_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_HOOK" ]; then
+            echo "::warning ::RENDER_DEPLOY_HOOK_URL secret is not configured in repository secrets. Skipping Render webhook call."
+            echo "configured=false" >> $GITHUB_OUTPUT
+          else
+            echo "configured=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Trigger Render Deployment
+        if: steps.check_hook.outputs.configured == 'true'
+        env:
+          RENDER_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          echo "Calling Render Deploy Hook..."
+          response=$(curl -s -w "\n%{http_code}" -X POST "$RENDER_HOOK")
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "HTTP Response Code: $http_code"
+          echo "Response Body: $body"
+
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "Render deployment triggered successfully!"
+          else
+            echo "Failed to trigger Render deployment. HTTP Code: $http_code"
+            exit 1
+          fi
