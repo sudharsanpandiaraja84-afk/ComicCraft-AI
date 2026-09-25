@@ -59,20 +59,24 @@ If you prefer to configure the service manually:
    - **Name**: `storyforge-ai`
    - **Region**: Choose the closest region (e.g., Oregon, Frankfurt).
    - **Branch**: `main` (or `master`).
-   - **Runtime**: **Docker**.
-   - **Dockerfile Path**: `./Dockerfile`.
-   - **Instance Type**: **Free** (or Starter for higher memory).
-4. Expand **Advanced**:
-   - **Health Check Path**: `/api/health`
-   - **Auto-Deploy**: Yes
-5. Add the following **Environment Variables**:
-   | Variable | Value | Notes |
-   |---|---|---|
-   | `PORT` | `8000` | Render dynamically sets its own port; the app auto-binds |
-   | `HOST` | `0.0.0.0` | Required for container networking |
-   | `ENV` | `production` | Disables debug reload and enables production headers |
-   | `GEMINI_API_KEY` | `AIzaSy...` | Your Google Gemini API Key |
-   | `IMAGE_PROVIDER` | `pollinations` | Default free image generator |
+### Mode A: Docker Runtime (Recommended)
+1. Set **Runtime**: `Docker`
+2. Set **Dockerfile Path**: `./Dockerfile`
+3. Set **Health Check Path**: `/api/health`
+4. Set Environment Variables:
+   - `GEMINI_API_KEY`: Your Gemini API key
+   - `IMAGE_PROVIDER`: `pollinations`
+   - `ENV`: `production`
+
+### Mode B: Native Python Runtime
+1. Set **Runtime**: `Python`
+2. Set **Build Command**: `./build.sh` (or `pip install -r requirements.txt`)
+3. Set **Start Command**: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+4. Set **Health Check Path**: `/api/health`
+5. Set Environment Variables:
+   - `GEMINI_API_KEY`: Your Gemini API key
+   - `IMAGE_PROVIDER`: `pollinations`
+   - `ENV`: `production`
 6. Click **Create Web Service**.
 
 ---
